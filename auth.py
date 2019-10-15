@@ -1,7 +1,7 @@
 #auth.py
 
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_user
+from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_user, logout_user, login_required
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
@@ -25,13 +25,6 @@ def login_post():
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember)
     return redirect(url_for('main.profile'))
-
-@auth.route('/signup', methods=['POST'])
-def signup_post():
-    ...
-    if user: # if a user is found, we want to redirect back to signup page so user can try again
-        flash('Email address already exists')
-        return redirect(url_for('auth.signup'))
 
 @auth.route('/logout')
 @login_required
@@ -59,3 +52,11 @@ def signup_post():
     db.session.commit()
 
     return redirect(url_for('auth.login'))
+
+@auth.route('/login')
+def login():
+    return render_template('login.html')
+
+@auth.route('/signup')
+def signup():
+    return render_template('signup.html')
